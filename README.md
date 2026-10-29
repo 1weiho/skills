@@ -26,6 +26,18 @@ npx skills add 1weiho/skills --skill cinematic-shot
 
 [`skills/cinematic-shot`](skills/cinematic-shot)
 
+### clean-ui-shot
+
+Shoots framed, cropped screenshots of a web app's real UI for docs, changelogs, landing pages, and READMEs: the app as a rounded, shadowed window on a soft gray stage, padded where the window edge shows and bleeding off the stage where the crop cuts through. It drives the running app with Playwright, so the shots show the current UI, and comes with a shot recipe file, the shoot-and-compose script, and a contact sheet for reviewing a batch.
+
+Try: "Take clean screenshots of the settings page and the export dialog for the docs."
+
+```bash
+npx skills add 1weiho/skills --skill clean-ui-shot
+```
+
+[`skills/clean-ui-shot`](skills/clean-ui-shot)
+
 ## Support
 
 If these skills have been useful to you, consider supporting development:
