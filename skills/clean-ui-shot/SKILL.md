@@ -91,8 +91,8 @@ directory.
    webp, or when the files are committed and served as-is with no pipeline
    and size matters. Lossy webp subsamples chroma, so small coloured text
    softens slightly. Expect clean PNGs of roughly 100–400 KB and glass PNGs
-   of 0.5–1 MB (the stage's film grain doesn't compress losslessly); webp
-   is usually under 100 KB in either style.
+   of around 0.5–1.2 MB (the stage's film grain doesn't compress
+   losslessly); webp is usually under 100 KB in either style.
 
 5. **Look at every image** before using it. To review a batch at once:
    ```bash
