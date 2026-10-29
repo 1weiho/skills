@@ -12,17 +12,24 @@
 //   crop        { x, y, w, h } in CSS px of the viewport. Omit for the full
 //               window. Edges touching the viewport get padding, inner edges
 //               bleed. Keep w ≥ ~900 so UI text stays legible in a docs column.
+//   style       'clean' or 'glass'. Overrides --style for this shot; keep
+//               one style per batch.
 //   colorScheme 'light' (default) or 'dark', passed to the browser.
-//   stage       'light' or 'dark'. Follows colorScheme unless set; set it for
-//               UIs that are dark regardless of the scheme.
+//   stage       'light' or 'dark'. In clean it follows colorScheme, in glass
+//               the shot's brightness, unless set; set it for UIs that are
+//               dark regardless of the scheme.
+//   gradient    a CSS background for the stage, replacing the default (clean)
+//               or the palette read from the shot (glass).
 //   init        function run in the page before load (localStorage seeding).
 //   routes      async (context) => {} to mock network routes.
 //   setup       async ({ page, context, base }) => {}; may return another
 //               page (a popup) to shoot instead.
 //   beforeShot  async ({ page }) => {} right before the capture (hover etc.).
 //   settle      ms to wait after setup (default 700).
-//   pad, radius, stageW
-//               override the frame. Leave them alone so shots match.
+//   pad, radius, stageW, bezel
+//               override the frame (bezel is glass only). Extra padding
+//               widens the stage instead of shrinking the UI. Leave them
+//               alone so shots match, except for phone shots.
 
 const EDITOR = { width: 1280, height: 720 };
 
@@ -101,6 +108,20 @@ export default [
           },
         }),
       );
+    },
+  },
+  {
+    // A phone viewport. A narrower stage keeps the 390px UI from being blown
+    // up (about 640 for glass, 560 for clean), and a larger radius reads as
+    // a phone screen.
+    name: 'share-sheet-mobile',
+    path: '/projects/demo',
+    viewport: { width: 390, height: 844 },
+    stageW: 560,
+    radius: 40,
+    async setup({ page }) {
+      await page.getByRole('button', { name: 'Share' }).click();
+      await page.getByRole('dialog').waitFor();
     },
   },
   {

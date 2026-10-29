@@ -28,7 +28,7 @@ npx skills add 1weiho/skills --skill cinematic-shot
 
 ### clean-ui-shot
 
-Shoots framed, cropped screenshots of a web app's real UI for docs, changelogs, landing pages, and READMEs: the app as a rounded, shadowed window on a soft gray stage, padded where the window edge shows and bleeding off the stage where the crop cuts through. It drives the running app with Playwright, so the shots show the current UI, and comes with a shot recipe file, the shoot-and-compose script, and a contact sheet for reviewing a batch.
+Shoots framed, cropped screenshots of a web app's real UI for docs, changelogs, landing pages, and READMEs: the app as a rounded, shadowed window on a stage, padded where the window edge shows and bleeding off the stage where the crop cuts through. It asks which style you want first: **clean**, a soft gray stage, or **glass**, a gradient coloured from the UI itself with a frosted white bezel. It drives the running app with Playwright, so the shots show the current UI, and comes with a shot recipe file, the shoot-and-compose script, and a contact sheet for reviewing a batch.
 
 Try: "Take clean screenshots of the settings page and the export dialog for the docs."
 

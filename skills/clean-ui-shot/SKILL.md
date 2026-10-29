@@ -1,16 +1,30 @@
 ---
 name: clean-ui-shot
-description: Shoot polished, framed screenshots of a web app's real UI as cropped webp images, the app as a rounded, shadowed window on a soft gray stage, with padding where the window edge shows and bleed where the crop cuts through. A house style for docs pages, changelogs, landing pages, and READMEs. Use whenever the user asks for UI screenshots, docs or changelog images, "nice", "framed", "clean", or "cropped" screenshots of their app, or wants existing product screenshots refreshed because the UI changed, even if they don't name this skill or describe the style.
+description: Shoot polished, framed screenshots of a web app's real UI as cropped webp images, the app as a rounded, shadowed window on a stage, with padding where the window edge shows and bleed where the crop cuts through. Two styles, asked up front, clean (a soft gray stage) or glass (a gradient coloured from the UI itself, with a frosted white bezel). A house style for docs pages, changelogs, landing pages, and READMEs. Use whenever the user asks for UI screenshots, docs or changelog images, "nice", "framed", "clean", or "cropped" screenshots of their app, or wants existing product screenshots refreshed because the UI changed, even if they don't name this skill or describe the style.
 ---
 
 # Clean UI shot
 
 The output is a webp like a product-page detail shot: a crop of the real
-UI, rendered as a window with rounded corners and a layered shadow on a warm
-gray gradient. Window edges that fall inside the crop get 56px of padding;
-edges where the crop cuts through the UI bleed off the stage. That contrast is
-what makes a crop read as "a detail of a real app" instead of a pasted
-rectangle, so choose crops with it in mind.
+UI, rendered as a window with rounded corners and a shadow on a stage.
+Window edges that fall inside the crop get padding; edges where the crop cuts
+through the UI bleed off the stage. That contrast is what makes a crop read
+as "a detail of a real app" instead of a pasted rectangle, so choose crops
+with it in mind.
+
+There are two styles. Both use the same crops and render the UI at the same
+scale; only the stage and frame differ.
+
+- **clean** (default): a soft warm-gray gradient stage, a layered neutral
+  shadow, 56px of padding. Quiet and consistent; suits docs, changelogs,
+  and READMEs, where many shots sit together.
+- **glass**: a gradient stage coloured from the shot itself, a frosted,
+  semi-transparent white bezel around the window, and 96px of padding. The
+  script samples the capture, picks its main hues (saturated brand accents
+  count more than large pale areas), and lays soft tints of them into the
+  corners, so every product gets its own palette. A dark UI gets deep tones;
+  a UI with no colour falls back to the clean stage. Suits landing pages,
+  launch posts, and social images.
 
 Everything is captured from the real app running locally, ideally a
 throwaway instance with demo data, so the shots show the current UI, not a
@@ -25,6 +39,11 @@ directory.
 
 ## Before you start
 
+- **Ask which style the user wants before shooting**, unless they already
+  said. Describe both in a sentence each (as above), say which you'd pick for
+  where the images will go, and wait for the answer. Use one style per
+  batch, so images that sit together match. If the project already has shots
+  in one of these styles, say so and suggest matching them.
 - **Ask before starting a dev server.** Many people prefer to start their
   own. Explain why the shots need one and propose a throwaway instance on a
   free port. Approval doesn't carry over from an earlier session.
@@ -57,11 +76,13 @@ directory.
 
 4. **Shoot.**
    ```bash
-   node <skill>/scripts/shoot.mjs <shots.mjs> --url http://127.0.0.1:<port> --out <dir> [--only a,b] [--raw <dir>]
+   node <skill>/scripts/shoot.mjs <shots.mjs> --url http://127.0.0.1:<port> --out <dir> --style clean|glass [--only a,b] [--raw <dir>]
    ```
    Each shot is captured at 3× device scale and composed at 2×, giving a
-   2000px-wide webp (q86, usually 40–100 KB). Pass `--raw` to keep the
-   uncomposed captures for debugging.
+   2000px-wide webp for clean (2160px for glass, whose wider padding widens
+   the stage) at q86, usually 40–100 KB. `--style` applies to every shot; a
+   shot's own `style` overrides it. Glass prints the gradient it built for
+   each shot. Pass `--raw` to keep the uncomposed captures for debugging.
 
 5. **Look at every image** before using it. The Read tool can open webp
    files. To review a batch at once:
@@ -115,6 +136,9 @@ directory.
 - **Consistency:** keep the stage, padding, and radius as the script sets
   them, so new shots match the existing ones. The dark stage is only for
   UIs that are dark themselves.
+- **Phones:** for a phone-sized viewport (about 390×844), set `stageW` so
+  the UI isn't blown up (≈ 560 for clean, ≈ 640 for glass) and raise
+  `radius` to about 40 so the window reads as a phone screen.
 
 ## Gotchas
 
@@ -136,5 +160,10 @@ directory.
 - **Content:** use demo data and generated assets only. Never use real
   people's photos, avatars, names, or emails as sample content. Don't copy
   the user's own work-in-progress data into the scratch project.
+- **Glass palette:** check the gradient against the product. A tiny accent
+  can outweigh the brand colour, or a large pale area can lose to a small
+  icon. If the colours are off, pass a CSS background as the shot's
+  `gradient` (start from the one the script printed), and use the same one
+  for every shot in the batch.
 - **Dark mode:** shoot light by default. Light shots read fine as light
   cards on a dark site. Don't produce dark variants unless asked.
