@@ -1,19 +1,22 @@
 // Captures UI states from a running web app and composes them into framed
-// webp images.
+// images.
 //
 //   node shoot.mjs <shots.mjs> --url <base-url> --out <dir>
-//     [--style clean|glass] [--only a,b] [--raw <dir>]
+//     [--style clean|glass] [--format png|webp] [--only a,b] [--raw <dir>]
 //
 // <shots.mjs> default-exports an array of shot definitions; see
 // shots.example.mjs for the full shape and working recipes. --style sets the
-// style for every shot that doesn't set its own.
+// style for every shot that doesn't set its own. --format defaults to
+// lossless png, a master the site's own image pipeline can re-encode; webp
+// (q86) is much smaller but lossy, and its chroma subsampling softens
+// coloured text.
 import { mkdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { loadPlaywright, loadSharp, parseArgs } from './lib.mjs';
 
 const usage =
-  'usage: node shoot.mjs <shots.mjs> --url <base-url> --out <dir> [--style clean|glass] [--only a,b] [--raw <dir>]';
+  'usage: node shoot.mjs <shots.mjs> --url <base-url> --out <dir> [--style clean|glass] [--format png|webp] [--only a,b] [--raw <dir>]';
 const { flags, positional } = parseArgs(process.argv.slice(2));
 const [shotsFile] = positional;
 if (!shotsFile || typeof flags.url !== 'string' || !flags.out) {
@@ -24,6 +27,12 @@ const STYLES = ['clean', 'glass'];
 const defaultStyle = typeof flags.style === 'string' ? flags.style : 'clean';
 if (!STYLES.includes(defaultStyle)) {
   console.error(`unknown --style ${defaultStyle}; expected ${STYLES.join(' or ')}`);
+  process.exit(1);
+}
+const FORMATS = ['png', 'webp'];
+const format = typeof flags.format === 'string' ? flags.format : 'png';
+if (!FORMATS.includes(format)) {
+  console.error(`unknown --format ${format}; expected ${FORMATS.join(' or ')}`);
   process.exit(1);
 }
 
@@ -259,8 +268,12 @@ async function compose(shot, { buf, viewport }) {
   await page.locator('img').evaluate((img) => img.decode());
   const png = await page.locator('.stage').screenshot();
   await context.close();
-  const file = path.join(outDir, `${shot.name}.webp`);
-  const info = await sharp(png).webp({ quality: 86, effort: 6 }).toFile(file);
+  const file = path.join(outDir, `${shot.name}.${format}`);
+  const encoded =
+    format === 'webp'
+      ? sharp(png).webp({ quality: 86, effort: 6 })
+      : sharp(png).png({ compressionLevel: 9, adaptiveFiltering: true });
+  const info = await encoded.toFile(file);
   console.log(`${file}  ${info.width}x${info.height}  ${(info.size / 1024).toFixed(0)}KB`);
 }
 
