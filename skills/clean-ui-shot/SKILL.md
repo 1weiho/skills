@@ -1,11 +1,11 @@
 ---
 name: clean-ui-shot
-description: Shoot polished, framed screenshots of a web app's real UI as cropped webp images, the app as a rounded, shadowed window on a stage, with padding where the window edge shows and bleed where the crop cuts through. Two styles, asked up front, clean (a soft gray stage) or glass (a gradient coloured from the UI itself, with a frosted white bezel). A house style for docs pages, changelogs, landing pages, and READMEs. Use whenever the user asks for UI screenshots, docs or changelog images, "nice", "framed", "clean", or "cropped" screenshots of their app, or wants existing product screenshots refreshed because the UI changed, even if they don't name this skill or describe the style.
+description: Shoot polished, framed screenshots of a web app's real UI as cropped images, the app as a rounded, shadowed window on a stage, with padding where the window edge shows and bleed where the crop cuts through. Two styles, asked up front, clean (a soft gray stage) or glass (a gradient coloured from the UI itself, with a frosted white bezel). A house style for docs pages, changelogs, landing pages, and READMEs. Use whenever the user asks for UI screenshots, docs or changelog images, "nice", "framed", "clean", or "cropped" screenshots of their app, or wants existing product screenshots refreshed because the UI changed, even if they don't name this skill or describe the style.
 ---
 
 # Clean UI shot
 
-The output is a webp like a product-page detail shot: a crop of the real
+The output is an image like a product-page detail shot: a crop of the real
 UI, rendered as a window with rounded corners and a shadow on a stage.
 Window edges that fall inside the crop get padding; edges where the crop cuts
 through the UI bleed off the stage. That contrast is what makes a crop read
@@ -76,18 +76,27 @@ directory.
 
 4. **Shoot.**
    ```bash
-   node <skill>/scripts/shoot.mjs <shots.mjs> --url http://127.0.0.1:<port> --out <dir> --style clean|glass [--only a,b] [--raw <dir>]
+   node <skill>/scripts/shoot.mjs <shots.mjs> --url http://127.0.0.1:<port> --out <dir> --style clean|glass [--format png|webp] [--only a,b] [--raw <dir>]
    ```
    Each shot is captured at 3× device scale and composed at 2×, giving a
-   2000px-wide webp for clean (2160px for glass, whose wider padding widens
-   the stage) at q86, usually 40–100 KB. `--style` applies to every shot; a
-   shot's own `style` overrides it. Glass prints the gradient it built for
-   each shot. Pass `--raw` to keep the uncomposed captures for debugging.
+   2000px-wide image for clean (2160px for glass, whose wider padding widens
+   the stage). `--style` applies to every shot; a shot's own `style`
+   overrides it. Glass prints the gradient it built for each shot. Pass
+   `--raw` to keep the uncomposed captures for debugging.
 
-5. **Look at every image** before using it. The Read tool can open webp
-   files. To review a batch at once:
+   The default format is lossless PNG: a master that keeps coloured text
+   crisp and that a site's image pipeline (Next `<Image>`, Astro, a CDN) can
+   re-encode without compounding loss. Pass `--format webp` for a q86 webp
+   at a fraction of the size when the project already keeps its images as
+   webp, or when the files are committed and served as-is with no pipeline
+   and size matters. Lossy webp subsamples chroma, so small coloured text
+   softens slightly. Expect clean PNGs of roughly 100–400 KB and glass PNGs
+   of 0.5–1 MB (the stage's film grain doesn't compress losslessly); webp
+   is usually under 100 KB in either style.
+
+5. **Look at every image** before using it. To review a batch at once:
    ```bash
-   node <skill>/scripts/contact-sheet.mjs <sheet.png> a.webp b.webp c.webp d.webp
+   node <skill>/scripts/contact-sheet.mjs <sheet.png> a.png b.png c.png d.png
    ```
    Check for: a crop that slices through a label or pill, empty space
    dominating the frame, text too small to read, a stray hover or focus
@@ -96,7 +105,7 @@ directory.
 
 6. **Place the images** where the project already keeps them (look for an
    existing `public/`, `assets/`, or `docs/images/` folder and match its
-   naming).
+   naming and image format).
    - If the site has an image-zoom component, use it so the 2000px detail
      is reachable on click.
    - Alt text describes what the image shows ("The Properties tab showing

@@ -4,7 +4,7 @@
 // (getByRole, getByText, getByTitle): they survive restyling.
 //
 // Shot fields:
-//   name        output file name (<name>.webp)
+//   name        output file name (<name>.png, or .webp with --format webp)
 //   path        route to open first, relative to --url. Optional when setup
 //               navigates itself.
 //   viewport    { width, height } in CSS px. Default 1280×800. 1280×720 for
